@@ -26,3 +26,10 @@ CREATE TABLE anuncios(
     foreign key(id_usuario) references usuarios(id),
     foreign key(id_categoria) references categorias(id)
 );
+
+CREATE TABLE anuncios_imagens(
+    id int primary key auto_increment,
+    id_anuncio int not null,
+    url varchar(50) not null,
+    foreign key (id_anuncio) references anuncios(id)
+);
