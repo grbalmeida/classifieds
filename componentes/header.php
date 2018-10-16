@@ -1,3 +1,4 @@
+<?php require_once 'database/config.php'; ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -17,8 +18,13 @@
 			<div>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
-						<a href="" class="text-white">Cadastre-se</a> | 
-						<a href="" class="text-white">Login</a>
+						<?php if(!empty($_SESSION['c_login'])): ?>
+						<a href="meus-anuncios.php">Meus Anúncios</a>
+						<a href="sair.php">Sair</a>
+						<?php else: ?>
+						<a href="cadastre-se.php" class="text-white">Cadastre-se</a> | 
+						<a href="login.php" class="text-white">Login</a>
+						<?php endif; ?>
 					</li>
 				</ul>
 			</div>
