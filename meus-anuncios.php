@@ -1,5 +1,6 @@
 <?php 
-	require_once 'componentes/header.php'; 
+	require_once 'componentes/header.php';
+
 	if(empty($_SESSION['c_login']))
 	{
 		header('Location: index.php');
@@ -26,18 +27,22 @@
 			?>
 			<tr>
 				<td>
+					<?php if($anuncio['url']): ?>
 					<img src="images/anuncios/<?php echo $anuncio['url']; ?>">
+					<?php else: ?>
+					<img src="images/anuncios/default.jpg" width="60">
+					<?php endif; ?>
 				</td>
 				<td><?php echo $anuncio['titulo']; ?></td>
 				<td><?php echo number_format($anuncio['valor'], 2, ',', '.') ?></td>
 				<td>
 					<form method="POST" action="excluir-anuncio.php">
 						<input type="hidden" name="id_anuncio" value="<?php echo $anuncio['id']; ?>">
-						<a href="">Excluir</a>
+						<input type="submit" value="Excluir" class="btn btn-default mb-2">
 					</form>
 					<form method="POST" action="editar-anuncio.php">
 						<input type="hidden" name="id_anuncio" value="<?php echo $anuncio['id']; ?>">
-						<a href="">Editar</a>
+						<input type="submit" value="Editar" class="btn btn-primary">
 					</form>
 				</td>
 			</tr>
