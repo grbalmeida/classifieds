@@ -29,4 +29,18 @@ class Usuarios
 
 		return true;
 	}
+
+	public function login(string $email, string $senha) : bool
+	{
+		$sql = $this->pdo->prepare('SELECT id FROM usuarios WHERE email = ? AND senha = ?');
+		$sql->execute([$email, $senha]);
+
+		if($sql->rowCount() > 0)
+		{
+			$dado = $sql->fetch(PDO::FETCH_ASSOC);
+			$_SESSION['c_login'] = $dado['id'];
+			return true;
+		}
+		return false;
+	}
 }
