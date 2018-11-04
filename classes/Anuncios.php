@@ -165,4 +165,12 @@ class Anuncios
 
 		return $id_anuncio;
 	}
+
+	public function getTotalAnuncios() : int
+	{
+		$query = 'SELECT COUNT(*) AS quantidade_anuncios FROM anuncios';
+		$sql = $this->pdo->query($query);
+		$quantidade = $sql->fetch(PDO::FETCH_ASSOC)['quantidade_anuncios'];
+		return $quantidade;
+	}
 }
