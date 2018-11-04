@@ -173,4 +173,23 @@ class Anuncios
 		$quantidade = $sql->fetch(PDO::FETCH_ASSOC)['quantidade_anuncios'];
 		return $quantidade;
 	}
+
+	public function getUltimosAnuncios(int $pagina_atual, int $quantidade_anuncios) : array
+	{
+		$offset = ($pagina_atual - 1) * $quantidade_anuncios;
+		$array = [];
+		$query = "SELECT id, titulo, valor, (select anuncios_imagens.url from 
+		anuncios_imagens where anuncios_imagens.id_anuncio = anuncios.id limit 1) 
+		as url, (select categorias.nome from categorias where categorias.id = 
+		anuncios.id_categoria) as categoria FROM anuncios ORDER BY id DESC LIMIT 
+		$offset, $quantidade_anuncios";
+		$sql = $this->pdo->prepare($query);
+		$sql->execute();
+		
+		if($sql->rowCount() > 0)
+		{
+			$array = $sql->fetchAll(PDO::FETCH_ASSOC);
+		}
+		return $array;
+	}
 }
