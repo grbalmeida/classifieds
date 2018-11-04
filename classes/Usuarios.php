@@ -43,4 +43,11 @@ class Usuarios
 		}
 		return false;
 	}
+	public function getTotalUsuarios() : int
+	{
+		$query = 'SELECT COUNT(*) AS quantidade_usuarios FROM usuarios';
+		$sql = $this->pdo->query($query);
+		$quantidade = $sql->fetch(PDO::FETCH_ASSOC)['quantidade_usuarios'];
+		return $quantidade;
+	}
 }
