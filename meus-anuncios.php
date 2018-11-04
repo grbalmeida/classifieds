@@ -38,7 +38,7 @@
 			<tr>
 				<td>
 					<?php if($anuncio['url']): ?>
-					<img src="images/anuncios/<?php echo $anuncio['url']; ?>">
+					<img src="<?php echo $anuncio['url']; ?>" width="60">
 					<?php else: ?>
 					<img src="images/anuncios/default.jpg" width="60">
 					<?php endif; ?>
