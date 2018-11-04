@@ -11,7 +11,8 @@
 	$categorias = new Categorias($pdo);
 	$anuncios = new Anuncios($pdo);
 
-	if(!isset($_POST['id_anuncio']) || count($anuncios->getAnuncio($_POST['id_anuncio'])) == 0)
+	if(!isset($_POST['id_anuncio']) || 
+		count($anuncios->getAnuncio($_POST['id_anuncio'])) == 0)
 	{
 		header('Location: meus-anuncios.php');
 		exit;
@@ -29,9 +30,16 @@
 			$descricao = $_POST['descricao'];
 			$estado = intval($_POST['estado']);
 			$id_anuncio = $_POST['id_anuncio'];
-			$anuncios->editar($id_anuncio, $id_categoria, $titulo, $valor, $descricao, $estado);
-			header('Location: meus-anuncios.php');
-			exit;
+			
+			if(isset($_FILES['fotos']))
+			{
+				$fotos = $_FILES['fotos'];
+			} 
+			else {
+				$fotos = [];
+			}
+
+			$anuncios->editar($id_anuncio, $id_categoria, $titulo, $valor, $descricao, $estado, $fotos);
 
 			?>
 			<div class="mt-3 alert alert-success">
@@ -40,8 +48,7 @@
 			<?php
 		}
 	}
-
-	$informacoes = $anuncios->getAnuncio($_POST['id_anuncio'])[0];
+	$informacoes = $anuncios->getAnuncio($_POST['id_anuncio']);
 ?>
 <div class="mt-3 container">
 	<h1>Meus Anúncios - Editar Anúncio</h1>
@@ -82,7 +89,22 @@
 				<option value="3" <?php echo $informacoes['estado'] == 3 ? 'selected' : '' ?>>Ótimo</option>
 			</select>
 		</div>
-		<input type="submit" name="submit" value="Salvar" class="btn btn-default">
+		<div class="form-group">
+			<label for="add_foto">Fotos do anúncio</label>
+			<input type="file" name="fotos[]" multiple>
+			<div class="card bg-light mt-3 mb-3" style="max-width: 18rem;">
+			  <div class="card-header">Fotos do Anúncio</div>
+			  <div class="card-body">
+			    <?php foreach($informacoes['fotos'] as $foto): ?>
+			    <div class="foto_item">
+			    	<img class="img-thumbnail" src="<?php echo $foto['url']; ?>">
+			    	<a href="excluir-foto.php?id=<?php echo $foto['id']; ?>" class="btn btn-default">Excluir imagem</a>
+			    </div>
+			    <?php endforeach; ?>
+			  </div>
+			</div>
+		</div>
+		<input type="submit" name="submit" value="Salvar" class="btn btn-default mb-3">
 	</form>
 </div>
 <?php require_once 'componentes/footer.php'; ?>
