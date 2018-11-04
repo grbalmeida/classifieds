@@ -68,13 +68,23 @@ class Anuncios
 
 		if($sql->rowCount() > 0) 
 		{
-			$anuncio[] = $sql->fetch(PDO::FETCH_ASSOC);
+			$anuncio = $sql->fetch(PDO::FETCH_ASSOC);
+			$anuncio['fotos'] = [];
+			$query = 'SELECT id, url FROM anuncios_imagens WHERE id_anuncio = :id_anuncio';
+			$sql = $this->pdo->prepare($query);
+			$sql->bindValue(':id_anuncio', $id_anuncio);
+			$sql->execute();
+
+			if($sql->rowCount() > 0)
+			{
+				$anuncio['fotos'] = $sql->fetchAll(PDO::FETCH_ASSOC);
+			}
 		}
 		return $anuncio;
 	}
 
 	public function editar(int $id_anuncio, int $id_categoria, string $titulo, 
-		$valor, string $descricao, int $estado) : void
+		$valor, string $descricao, int $estado, array $fotos) : void
 	{
 		$id_usuario = $_SESSION['c_login'];
 		$query = 'UPDATE anuncios SET titulo = :titulo, id_categoria = :id_categoria, 
@@ -89,5 +99,70 @@ class Anuncios
 		$sql->bindValue(':id_anuncio', $id_anuncio);
 		$sql->bindValue(':id_usuario', $id_usuario);
 		$sql->execute();
+
+		if(count($fotos) > 0)
+		{
+			for($cont = 0; $cont < count($fotos['tmp_name']); $cont++)
+			{
+				$tipo = $fotos['type'][$cont];
+				if(in_array($tipo, ['image/jpeg', 'image/png']))
+				{
+					$nome_arquivo = md5(time().rand(0, 99999)).'.jpg';
+					$caminho = ''.$nome_arquivo;
+					move_uploaded_file($fotos['tmp_name'][$cont], $caminho);
+					list($largura_original, $altura_original) = getimagesize($caminho);
+					$ratio = $largura_original / $altura_original;
+					$largura = 500;
+					$altura = 500;
+
+					if($largura / $altura > $ratio)
+						$largura = $altura * $ratio;
+					else
+						$altura = $largura / $ratio;
+
+					$imagem = imagecreatetruecolor($largura, $altura);
+
+					if($tipo = 'image/jpeg')
+						$origi = imagecreatefromjpeg($caminho);
+					elseif($tipo = 'image/png')
+						$origi = imagecreatefrompng($caminho);	
+
+					imagecopyresampled($imagem, $origi, 0, 0, 0, 0, $largura, $altura, 
+						$largura_original, $altura_original);
+					imagejpeg($imagem, $caminho, 80);
+					$this->inserirImagensDoAnuncio($id_anuncio, $caminho);
+				}
+			}
+		}
+	}
+
+	private function inserirImagensDoAnuncio(int $id_anuncio, string $url) : void
+	{
+		$query = 'INSERT INTO anuncios_imagens (id_anuncio, url) VALUES 
+		(:id_anuncio, :url)';
+		$sql = $this->pdo->prepare($query);
+		$sql->bindValue(':id_anuncio', $id_anuncio);
+		$sql->bindValue(':url', $url);
+		$sql->execute();
+	}
+
+	public function excluirFoto(int $id) : int
+	{
+		$id_anuncio = 0;
+		$query = 'SELECT id_anuncio FROM anuncios_imagens WHERE id = :id';
+		$sql = $this->pdo->prepare($query);
+		$sql->execute();
+
+		if($sql->rowCount() > 0)
+		{
+			$id_anuncio = $sql->fetch(PDO::FETCH_ASSOC)['id_anuncio'];
+		}
+
+		$query = 'DELETE FROM anuncios_imagens WHERE id = :id';
+		$sql = $this->pdo->prepare($query);
+		$sql->bindValue(':id', $id);
+		$sql->execute();
+
+		return $id_anuncio;
 	}
 }
