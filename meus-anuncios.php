@@ -7,6 +7,16 @@
 		exit;
 	}
 ?>
+
+<?php if(isset($_SESSION['anuncio_excluido'])): ?>
+	<div class="alert alert-success">
+		Anúncio <?php echo $_SESSION['anuncio_excluido'] ?> excluído com sucesso
+	</div>
+<?php 
+	endif;
+	unset($_SESSION['anuncio_excluido']); 
+?>
+
 <div class="mt-3 container">
 	<h1>Meus Anúncios</h1>
 	<a href="add-anuncio.php" class="btn btn-default">Adicionar Anúncio</a>

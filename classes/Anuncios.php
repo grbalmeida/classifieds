@@ -29,4 +29,11 @@ class Anuncios
 		$sql->bindValue(':estado', $estado);
 		$sql->execute();
 	}
+
+	public function excluirAnuncio(int $id_anuncio) : void
+	{
+		$sql = $this->pdo->prepare('DELETE FROM anuncios WHERE id = :id');
+		$sql->bindValue(':id', $id_anuncio);
+		$sql->execute();
+	}
 }
