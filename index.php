@@ -1,8 +1,16 @@
 <?php require_once 'componentes/header.php'; ?>
 	<div class="container-fluid mt-3">
 		<div class="jumbotron">
-			<h3>Nós temos hoje 999 anúncios.</h3>
-			<p>E mais de 999 usuários cadastrados.</p>
+			<?php 
+				require 'classes/Anuncios.php';
+				require 'classes/Usuarios.php';
+				$anuncios = new Anuncios($pdo);
+				$usuarios = new Usuarios($pdo);
+				$total_anuncios = $anuncios->getTotalAnuncios();
+				$total_usuarios = $usuarios->getTotalUsuarios();
+			?>	
+			<h3>Nós temos hoje <?php echo $total_anuncios; ?> anúncios.</h3>
+			<p>E mais de <?php echo $total_usuarios; ?> usuários cadastrados.</p>
 		</div>
 		<div class="row">
 			<div class="col-sm-3">
