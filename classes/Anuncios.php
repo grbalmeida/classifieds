@@ -32,8 +32,17 @@ class Anuncios
 
 	public function excluirAnuncio(int $id_anuncio) : void
 	{
+		$this->excluirImagensAnuncio($id_anuncio);
+
 		$sql = $this->pdo->prepare('DELETE FROM anuncios WHERE id = :id');
 		$sql->bindValue(':id', $id_anuncio);
+		$sql->execute();
+	}
+
+	private function excluirImagensAnuncio(int $id_anuncio) : void
+	{
+		$sql = $this->pdo->prepare('DELETE FROM anuncios_imagens WHERE id_anuncio = :id_anuncio');
+		$sql->bindValue(':id_anuncio', $id_anuncio);
 		$sql->execute();
 	}
 }
