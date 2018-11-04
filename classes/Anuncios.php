@@ -59,13 +59,14 @@ class Anuncios
 	{
 		$anuncio = [];
 		$id_usuario = $_SESSION['c_login'];
-		$query = 'SELECT id_categoria, titulo, descricao, valor, estado FROM 
-		anuncios WHERE id = :id_anuncio AND id_usuario = :id_usuario';
+		$query = 'SELECT id_categoria, titulo, descricao, valor, estado, 
+		(select categorias.nome from categorias where categorias.id = 
+		anuncios.id_categoria) AS categoria, (select usuarios.telefone 
+		from usuarios where usuarios.id = anuncios.id_usuario) AS telefone 
+		FROM anuncios WHERE id = :id_anuncio';
 		$sql = $this->pdo->prepare($query);
 		$sql->bindValue(':id_anuncio', $id_anuncio);
-		$sql->bindValue(':id_usuario', $id_usuario);
 		$sql->execute();
-
 		if($sql->rowCount() > 0) 
 		{
 			$anuncio = $sql->fetch(PDO::FETCH_ASSOC);
